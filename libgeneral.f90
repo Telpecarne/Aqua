@@ -87,12 +87,49 @@ SUBROUTINE NORMALIZE_VECT (a)
 END SUBROUTINE NORMALIZE_VECT
 
 
+!!!!!!!!MINE!!!!!!
+SUBROUTINE  NOT_CUBIC(box,coor,vector)
+
+IMPLICIT NONE
+
+DOUBLE PRECISION,dimension(3,3),intent(IN)::box
+DOUBLE PRECISION,dimension(3)::vect
+DOUBLE PRECISION,dimension(3),INTENT(IN)::coor
+integer::k,l,m,counter,pos_min
+real::dist
+DOUBLE PRECISION,dimension(27)::dist_list
+DOUBLE PRECISION,dimension(3),intent(OUT)::vector
+DOUBLE PRECISION,dimension(27,3)::vector_list
+
+      counter=1
+      do k=-1,1
+         do l=-1,1
+            do m=-1,1
+               vect(:)=coor(:)+box(1,:)*k+box(2,:)*l+box(3,:)*m
+               
+               vector_list(counter,:)=vect(:)
+               dist_list(counter)=sqrt(dot_product(vect,vect))
+               counter=counter+1
+            end do
+         end do
+      end do
+      dist=minval(dist_list(:))
+      pos_min=minloc(dist_list(:),DIM=1)  
+      vector=vector_list(pos_min,:)
+ 
+
+
+END SUBROUTINE NOT_CUBIC
+!!!!!!!!!END MINE!!!!!!!!
+
+
 SUBROUTINE PBC(vector,box,ortho)
  
   IMPLICIT NONE
  
   DOUBLE PRECISION,DIMENSION(3),INTENT(INOUT)::vector
   DOUBLE PRECISION,DIMENSION(3,3),INTENT(IN)::box
+  DOUBLE PRECISION,DIMENSION(3)::aux
   INTEGER,INTENT(IN)::ortho
   INTEGER::i
   DOUBLE PRECISION::x,L,Lhalf
@@ -112,9 +149,11 @@ SUBROUTINE PBC(vector,box,ortho)
         END IF
      END DO
   ELSE
- 
+     !SUBROUTINE  NOT_CUBIC(box,vector,vector)
+     CALL NOT_CUBIC(box,vector,aux)
+     vector=aux
      print*, 'Corrections on PBC not implemented with a non-cubic box.'
- 
+     
   END IF
   
 END SUBROUTINE PBC
