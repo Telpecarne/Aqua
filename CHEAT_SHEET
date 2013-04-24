@@ -1,5 +1,5 @@
 #################################################################################
-#    GENERAL INFO    (cl_set.py, cl_coors.py, fort_general.f90)
+#####    GENERAL INFO    (cl_set.py, cl_coors.py, fort_general.f90)
 ###############################################################################
 
 from aqua import *
